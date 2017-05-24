@@ -52,6 +52,16 @@
                             $editar_post_conteudo = $_POST['post_conteudo'];
 
                             move_uploaded_file($editar_post_imagem_temp, "../images/$editar_post_imagem");
+
+                            if(empty($editar_post_imagem)){
+                              $query = "SELECT * FROM posts WHERE post_id = $post_id";
+                              $select_imagem = mysqli_query($connection, $query);
+
+                              while($row = mysqli_fetch_assoc($select_imagem)){
+                                $editar_post_imagem = $row['post_imagem'];
+                              }
+                            }
+
                             $query = "UPDATE posts SET post_nome = '$editar_post_nome', post_autor = '$editar_post_autor',
                             post_status = '$editar_post_status', post_imagem = '$editar_post_imagem', post_tags = '$editar_post_tags',
                             post_conteudo = '$editar_post_conteudo'
@@ -59,8 +69,13 @@
 
                             $editar_post = mysqli_query($connection, $query);
 
+                            echo "<p class='bg-success'>Post Atualizado. <a href='../admin/editar_post.php?edit={$post_id}'>Ver Post</a> ou
+                            <a href='post.php'> Editar Mais Posts </a>";
+
                             if(!$editar_post){
                               echo "Deu ruim" . mysqli_error($connection);
+                            } else {
+                              echo "Atualizado com sucesso!";
                             }
 
                           }
@@ -85,7 +100,8 @@
 
                                <div class="form-group">
                                  <label for="post_imagem">Imagem do Post</label>
-                                 <input type="file" name="post_imagem" value="<?php if(isset($post_imagem)) {echo $post_imagem;}?>">
+                                 <img src="../images/<?php echo $post_imagem; ?>" width="300">
+                                 <input type="file" name="post_imagem">
                                </div>
 
                                <div class="form-group">
